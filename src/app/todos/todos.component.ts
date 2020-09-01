@@ -1,16 +1,45 @@
-import {trigger, state, transition, animate, style, keyframes, useAnimation} from "@angular/animations";
+import {
+    trigger, 
+    state, 
+    transition, 
+    animate, 
+    style, 
+    keyframes, 
+    useAnimation, 
+    query, 
+    animateChild, 
+    group, 
+    stagger
+} from "@angular/animations";
 import { Component } from '@angular/core';
-import { fade, slide, bounceOutLeftAnimation } from "app/animations";
+import { fade, slide, bounceOutLeftAnimation, fadeInAnimation } from "app/animations";
 
 @Component({
   selector: 'todos',
   templateUrl: './todos.component.html',
   styleUrls: ['./todos.component.css'],
   animations: [
+      trigger('todosAnimation', [
+          transition(':enter', [
+              group([
+                  query('h1', [
+                      style({ transform: 'translateY(-20px)' }),
+                      animate(1000)
+                  ]),
+                  query('@todoAnimation',
+                     stagger(200, animateChild()) 
+                  )
+              ])
+          ])
+      ]),
+
       trigger('todoAnimation', [
           transition(':enter', [
-              style({ opacity: 0 }),
-              animate(2000)
+              useAnimation(fadeInAnimation, {
+                  params: {
+                      duration: '500ms'
+                  }
+              })
           ]),
           transition(':leave', [
               style({ backgroundColor: 'red' }),
@@ -35,4 +64,8 @@ export class TodosComponent {
     let index = this.items.indexOf(item);
     this.items.splice(index, 1);
   }
+
+  animationStarted($event) { console.log($event); }
+  animationDone($event) { console.log($event); }
+
 }
